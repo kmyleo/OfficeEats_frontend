@@ -35,8 +35,8 @@
 
         </div>
       </div>
-      <p class="px-4 grey--text text--darken-1"><span class="primary--text f-600 me-1">$20</span> • Cofee, set menu • 15
-        - 20 min </p>
+      <p class="px-4 grey--text text--darken-1"><span class="primary--text f-600 me-1"
+                                                      v-for="i in cardSection.restaurant_categories">{{i.name}}</span></p>
 
 
     </v-card>

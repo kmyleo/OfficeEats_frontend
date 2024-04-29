@@ -65,12 +65,12 @@
         <nuxt-link to="/SignUp" class=" grey--text text--darken-4 font-600">Sign Up</nuxt-link>
       </div>
     </div>
-    <div class="py-4 bg-grey-light">
+    <!-- <div class="py-4 bg-grey-light">
       <div class="text-center">
         <span class="grey--text text--darken-1">Forgot Your Password <nuxt-link to="/"
                                                                                 class="ms-2 grey--text text--darken-4 font-600">Reset It</nuxt-link> </span>
       </div>
-    </div>
+    </div> -->
   </v-card>
 </template>
 

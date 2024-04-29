@@ -1,11 +1,11 @@
 <template>
   <div class="box-wrapper">
-      <div 
+      <div
         class="box-sidebar border-r"
         :class="{ 'open': isOpen }"
       >
-        <v-btn 
-          icon 
+        <v-btn
+          icon
           tile
           class="mobile-box-btn-sidebar ms-auto"
           @click="isOpen = false"
@@ -13,13 +13,13 @@
             <v-icon>mdi-close</v-icon>
         </v-btn>
         <slot  name="boxSidebar">
-            
+
         </slot>
       </div>
-      
+
       <div class="box-content">
-        <v-btn 
-           
+        <v-btn
+
           color="primary"
           class="mobile-box-btn text-capitalize mb-4 mx-10"
           :class=" isOpen == true ? 'hidden' : 'visible'"
@@ -29,11 +29,11 @@
             Categories
         </v-btn>
         <slot name="boxContent">
-          
+
         </slot>
       </div>
-      <div class="box-overlay" 
-            :class="{ 'open': isOpen }" 
+      <div class="box-overlay"
+            :class="{ 'open': isOpen }"
             @click="isOpen = false"
       ></div>
   </div>
@@ -44,15 +44,15 @@ export default {
     data() {
         return {
             isOpen: false,
-           
+
         }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-    $sidebarWidth: 280px;
-    
+    $sidebarWidth: 200px;
+
     .mobile-box-btn-sidebar{
         display: none;
          @media (max-width: 960px){
@@ -66,10 +66,10 @@ export default {
         visibility: visible;
     }
     .box-wrapper {
-       
+
         display: flex;
         position: relative;
-       
+
         .box-sidebar {
             background-color: #fff;
             width: $sidebarWidth;
@@ -85,8 +85,8 @@ export default {
                 z-index: 10;
                 &.open {
                     left: 0;
-                    
-                    
+
+
                 }
             }
         }
@@ -101,7 +101,7 @@ export default {
             bottom: 0;
             background-color: rgba(0,0,0,0.5); /* Black background with opacity */
             z-index: 9; /* Specify a stack order in case you're using a different order for other elements */
-            cursor: pointer; 
+            cursor: pointer;
             &.open {
                 display: block;
             }
@@ -111,15 +111,15 @@ export default {
                 display: none;
                 @media (max-width: 960px){
                     display: block;
-                    
-                    
+
+
                 }
             }
             // background-color: #E7E0C9;
             width: calc(100% - #{$sidebarWidth});
             @media (max-width: 960px) {
                 width: 100%;
-                
+
             }
         }
     }

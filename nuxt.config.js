@@ -92,13 +92,20 @@ export default {
     ],
   },
 
+  mode: 'spa',
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ["@/assets/scss/foodtruck.scss"],
+
+  router: {
+    middleware: 'auth', // Use the 'auth' middleware globally
+  },
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/axios.js',
-    {src: '~/plugins/persistedState.js', mode: 'client'}
+    {src: '~/plugins/persistedState.js', mode: 'client'},
+    {src: '@/plugins/vue-html2pdf', mode: 'client'}
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -117,6 +124,7 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    'cookie-universal-nuxt',
     '@nuxtjs/axios',
     '@nuxtjs/dotenv',
   ],

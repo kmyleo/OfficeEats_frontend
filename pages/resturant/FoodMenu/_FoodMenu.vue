@@ -39,9 +39,11 @@
             {{ resturant.address }} -
             <nuxt-link to="" class="grey--text text--darken-3">Show Map</nuxt-link>
           </div>
-          <div v-for="(schedules, index) in schedules" :key="index" class="grey--text text--darken-1 align-middle text-14 mb-4 d-flex align-center flex-wrap" >
+          <div v-for="(schedules, index) in schedules" :key="index"
+               class="grey--text text--darken-1 align-middle text-14 mb-4 d-flex align-center flex-wrap">
             <v-icon left small color="grey">mdi-clock-outline</v-icon>
-            <span class="primary--text me-2">{{ schedules.status }}</span> - {{schedules.from_date}} - {{schedules.to_date}}: {{schedules.formatted_open_time}} - {{schedules.formatted_close_time}}
+            <span class="primary--text me-2">{{ schedules.status }}</span> - {{ schedules.from_date }} -
+            {{ schedules.to_date }}: {{ schedules.formatted_open_time }} - {{ schedules.formatted_close_time }}
           </div>
           <div class="grey--text text--darken-1 align-middle text-14 mb-4 d-flex align-center flex-wrap">
             <v-icon left small color="grey">mdi-earth</v-icon>
@@ -131,7 +133,8 @@
                                   <h6 class="ms-3 grey--text text--darken-1 font-weight-light">(57)</h6>
                                 </div> -->
                                 <div class="d-flex mb-1">
-                                  <p class="text-14 grey--text text--darken-1 text-decoration-line-through me-2 mb-0" v-if="item.discount > 0">
+                                  <p class="text-14 grey--text text--darken-1 text-decoration-line-through me-2 mb-0"
+                                     v-if="item.discount > 0">
                                     ${{ item.price }}
                                   </p>
                                   <p class="text-14 grey--text text--darken-4 me-2 mb-0" v-else>
@@ -140,7 +143,8 @@
                                   <p class="text-14 grey--text text--darken-4 me-2 mb-0" v-if="item.discount > 0">
                                     ${{ (item.price - item.price * (item.discount / 100)) }}
                                   </p>
-                                  <p class="text-14 primary--text mb-0" v-if="item.discount > 0">{{ item.discount }}% off</p>
+                                  <p class="text-14 primary--text mb-0" v-if="item.discount > 0">{{ item.discount }}%
+                                    off</p>
                                 </div>
                                 <p class="text-14 grey--text text--darken-1">{{ (item.description) }}</p>
                               </div>
@@ -246,6 +250,8 @@
     </v-container>
     <!-- <Location/> -->
     <Footer/>
+    <FoodItemCard v-if="showFoodItemDialog" :showDialog="showFoodItemDialog" :selectedFoodItem="selectedFoodItem"
+                  @close-food-item-dialog="closeFoodItemDialog"/>
 
   </div>
 </template>
@@ -294,7 +300,9 @@ export default {
     selectedFoodItemCategories: [],
     categories: [],
     filtered_categories: [],
-    schedules:[],
+    schedules: [],
+    showFoodItemDialog: false,
+    selectedFoodItem: {},
   }),
   methods: {
     getResturant() {
@@ -324,13 +332,18 @@ export default {
 
     },
     addFoodItem(itemFood) {
-      this.$store.commit('modules/cartItem/setFoodItem', itemFood)
+      this.showFoodItemDialog = true
+      this.selectedFoodItem = itemFood
+      // this.$store.commit('modules/cartItem/setFoodItem', itemFood)
+    },
+    closeFoodItemDialog() {
+      this.showFoodItemDialog = false
     },
     getCategory() {
       if (!this.resturant.categories || this.resturant.categories.length === 0) {
-    console.log('Restaurant has no categories to process.');
-    return;
-  }
+        console.log('Restaurant has no categories to process.');
+        return;
+      }
       this.$api("restaurant_category").then(response => {
         this.categories = response.data;
         this.filtered_categories = [];
@@ -342,8 +355,8 @@ export default {
         }
       })
     },
-    getResturantSchedules(){
-      this.$api("restaurant_schedule/?restaurant_id="+ this.$route.params.FoodMenu).then(response => {
+    getResturantSchedules() {
+      this.$api("restaurant_schedule/?restaurant_id=" + this.$route.params.FoodMenu).then(response => {
         this.schedules = response.data;
         console.log(response.data);
 
@@ -359,10 +372,10 @@ export default {
     this.getResturantSchedules()
   },
   computed: {
-  formattedCategories() {
-    return this.filtered_categories.join(', ');
-  }
-},
+    formattedCategories() {
+      return this.filtered_categories.join(', ');
+    }
+  },
 }
 </script>
 <style lang="scss">

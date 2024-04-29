@@ -34,15 +34,15 @@
             <div class="">
               <h5 class="text-truncate d-inline-block mw-120 mb-0 f-600">{{ item.name }}</h5>
               <p class="text-12 mb-0" v-if="item.allow_discount">${{ discountPrice(item.price, item.discount) }} x
-                1</p>
+                {{ item.quantity }}</p>
               <p class="text-12 mb-0" v-else>${{ item.price }} x {{ item.quantity }}</p>
               <h5 class="primary--text" v-if="item.allow_discount">{{
-                  (item.price) - (item.discount / 100) * item.price
+                  ((item.price) - (item.discount / 100) * item.price) * (item.quantity)
                 }}</h5>
-              <h5 class="primary--text" v-else>{{ item.price }}</h5>
+              <h5 class="primary--text" v-else>{{ item.price * item.quantity }}</h5>
             </div>
           </div>
-          <v-btn icon class="">
+          <v-btn icon class="" @click="removeFoodItemFromCart(item)">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </div>
@@ -71,13 +71,18 @@ export default {
       return price - (discount / 100) * price
     },
     increaseFoodQuantity(itemFood) {
-      this.$store.commit('modules/cartItem/setFoodItem', itemFood)
+      this.$store.commit('modules/cartItem/increaseFoodItem', itemFood)
       this.$forceUpdate();
     },
     decreaseFoodQuantity(itemFood) {
       this.$store.commit('modules/cartItem/decreaseFoodItem', itemFood)
       this.$forceUpdate();
     },
+    removeFoodItemFromCart(itemFood) {
+      this.$store.commit('modules/cartItem/removeFoodItem', itemFood.id)
+      this.$forceUpdate();
+    }
+
   },
   mounted() {
     console.log(this.foodItems)

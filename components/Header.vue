@@ -24,13 +24,13 @@
           <input class="white flex-grow-1  ps-5" type="text" v-model="resturantFilterValue"
                  placeholder="Search for restaurant "
                  @input="resturantFilterChanged"/>
-          <v-btn icon large tile class="rounded-l-0 text-capitalize">
+          <v-btn icon large tile class="rounded-l-0 text-capitalize" :to="`/resturant/ResturantTwoColumn/${resturantFilterValue}`">
             <v-icon small>mdi-magnify</v-icon>
           </v-btn>
         </div>
         <v-spacer></v-spacer>
 
-        <div v-if="getMe.username">
+        <div v-if="getMe.username!==undefined">
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" text class="d-flex align-center">
@@ -40,11 +40,17 @@
             </template>
 
             <v-list>
-              <v-list-item @click="gotoProfile">
-                <v-list-item-title>Profile</v-list-item-title>
+              <v-list-item to="/order/OrderList">
+                <v-list-item-title>Order History</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="gotoSettings">
-                <v-list-item-title>Settings</v-list-item-title>
+              <v-list-item to="/group/GroupList" v-if="!getMe.is_partner">
+                <v-list-item-title>View Groups</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/mygroup/MyGroupList" v-if="!getMe.is_partner">
+                <v-list-item-title>My Groups</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/dashboard/Review" v-if="getMe.is_partner">
+                <v-list-item-title>Reviews</v-list-item-title>
               </v-list-item>
               <!-- Additional menu items here -->
               <v-list-item @click="logout">
@@ -56,7 +62,7 @@
         <v-dialog
           v-model="dialog"
           width="500"
-          v-else
+          v-if="getMe.username===undefined"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -79,7 +85,7 @@
           ({{ foodItemsLength }})
         </v-btn>
 
-        <v-app-bar-nav-icon text light @click="drawer = true"></v-app-bar-nav-icon>
+        <!--        <v-app-bar-nav-icon text light @click="drawer = true"></v-app-bar-nav-icon>-->
 
       </v-container>
     </v-app-bar>
@@ -101,12 +107,13 @@
       </ShoppingCart>
       <template v-slot:append>
         <div class="pa-2">
-          <v-btn class="text-capitalize mb-3" block color="primary" @click="checkout">
+          <v-btn class="text-capitalize mb-3" block color="primary" @click="checkout"
+                 :disabled="totalPrice===0">
             Checkout Now ($ {{ totalPrice }})
           </v-btn>
-          <v-btn class="text-cappitalise" outlined block color="primary">
-            View Cart
-          </v-btn>
+          <!--          <v-btn class="text-cappitalise" outlined block color="primary">-->
+          <!--            View Cart-->
+          <!--          </v-btn>-->
         </div>
       </template>
     </v-navigation-drawer>
@@ -127,39 +134,39 @@
       </NavbarList>
     </v-navigation-drawer>
 
-    <v-row justify="center">
-      <v-dialog
-        v-model="orderCreatedDialog"
-        persistent
-        max-width="350"
-      >
+    <!--    <v-row justify="center">-->
+    <!--      <v-dialog-->
+    <!--        v-model="orderCreatedDialog"-->
+    <!--        persistent-->
+    <!--        max-width="350"-->
+    <!--      >-->
 
-        <v-card>
-          <v-card-title class="text-h5">
-            Yours Order is Successfully Placed
-          </v-card-title>
-          <v-card-text>You can Track your order from your Profile
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <!--            <v-btn-->
-            <!--              color="green darken-1"-->
-            <!--              text-->
-            <!--              @click="orderCreatedDialog = false"-->
-            <!--            >-->
-            <!--              Disagree-->
-            <!--            </v-btn>-->
-            <v-btn
-              color="green darken-1"
-              text
-              @click="gotoOrderHistory"
-            >
-              Goto Profile
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-row>
+    <!--        <v-card>-->
+    <!--          <v-card-title class="text-h5">-->
+    <!--            Yours Order is Successfully Placed-->
+    <!--          </v-card-title>-->
+    <!--          <v-card-text>You can Track your order from your Profile-->
+    <!--          </v-card-text>-->
+    <!--          <v-card-actions>-->
+    <!--            <v-spacer></v-spacer>-->
+    <!--            &lt;!&ndash;            <v-btn&ndash;&gt;-->
+    <!--            &lt;!&ndash;              color="green darken-1"&ndash;&gt;-->
+    <!--            &lt;!&ndash;              text&ndash;&gt;-->
+    <!--            &lt;!&ndash;              @click="orderCreatedDialog = false"&ndash;&gt;-->
+    <!--            &lt;!&ndash;            >&ndash;&gt;-->
+    <!--            &lt;!&ndash;              Disagree&ndash;&gt;-->
+    <!--            &lt;!&ndash;            </v-btn>&ndash;&gt;-->
+    <!--            <v-btn-->
+    <!--              color="green darken-1"-->
+    <!--              text-->
+    <!--              @click="gotoOrderHistory"-->
+    <!--            >-->
+    <!--              Goto Profile-->
+    <!--            </v-btn>-->
+    <!--          </v-card-actions>-->
+    <!--        </v-card>-->
+    <!--      </v-dialog>-->
+    <!--    </v-row>-->
 
 
   </div>
@@ -172,8 +179,8 @@ export default {
     return {
       drawer: false,
       dialog: false,
+      cardInformationDialog: false,
       group: null,
-      dialog: false,
       shoppingCartDrawer: false,
       resturantFilterValue: "",
       items: [
@@ -220,7 +227,8 @@ export default {
         },
 
       ],
-      orderCreatedDialog: false
+      orderCreatedDialog: false,
+      cardInformationError: {},
       // totalPrice: 0
     }
   },
@@ -237,12 +245,16 @@ export default {
     getMe() {
       return this.$store.state.modules.userInfo ? this.$store.state.modules.userInfo.userInfo : {}
     },
+    getOrderType() {
+      return this.$store.state.modules.cartItem.orderType
+    },
   },
   methods: {
     resturantFilterChanged() {
       this.$nuxt.$emit('resturant-filter-changed', this.resturantFilterValue)
     },
     checkout() {
+      this.cardInformationError = {}
       console.log(this.$store.state.modules.userInfo.userInfo)
       console.log(this.$store.state.modules.userInfo.userInfo.name)
       if (this.$store.state.modules.userInfo.userInfo.email === undefined) {
@@ -253,12 +265,43 @@ export default {
         cartItems['customer'] = this.$store.state.modules.userInfo.userInfo.id
         cartItems['total_amount'] = this.$store.state.modules.cartItem.totalPrice
         cartItems['food_items'] = foodItems
+        if (this.getOrderType === 'single') {
+          this.$api.post("singleorder/", cartItems).then(response => {
+            this.$store.commit('modules/cartItem/setResetCart', {})
+            this.orderCreatedDialog = true
+            console.log(response.data.payment_redirect_url)
+            window.location.replace(response.data.payment_redirect_url)
 
-        this.$api.post("singleorder/", cartItems).then(response => {
-          this.$store.commit('modules/cartItem/setResetCart', {})
-          this.orderCreatedDialog = true
+          }).catch(error => {
+            this.cardInformationError = error.response.data.card_information
+          })
+        } else if (this.getOrderType === 'group') {
+          cartItems['team'] = this.$store.state.modules.cartItem.team.team
+          cartItems['meal_type'] = this.$store.state.modules.cartItem.mealType.type
+          cartItems['food_history_id'] = this.$store.state.modules.cartItem.mealType.id
+          if (this.$store.state.modules.cartItem.mealType.type === 'Breakfast') {
+            cartItems['allowed_budget'] = this.$store.state.modules.cartItem.mealType.team_rule_detail.breakfast_budget
+          } else if (this.$store.state.modules.cartItem.mealType.type === 'Lunch') {
+            cartItems['allowed_budget'] = this.$store.state.modules.cartItem.mealType.team_rule_detail.breakfast_budget
+          } else if (this.$store.state.modules.cartItem.mealType.type === 'Dinner') {
+            cartItems['allowed_budget'] = this.$store.state.modules.cartItem.mealType.team_rule_detail.breakfast_budget
+          }
+          this.$api.post("grouporder/", cartItems).then(response => {
+            this.$store.commit('modules/cartItem/setResetCart', {})
+            this.orderCreatedDialog = true
+            window.location.replace(response.data.payment_redirect_url)
 
-        })
+          })
+        } else if (this.getOrderType === 'catering') {
+          cartItems['no_of_peoples'] = this.$store.state.modules.cartItem.noOfPeoples
+          this.$api.post("cateringorder/", cartItems).then(response => {
+            this.$store.commit('modules/cartItem/setResetCart', {})
+            this.orderCreatedDialog = true
+            window.location.replace(response.data.payment_redirect_url)
+
+          })
+        }
+
       }
 
     },
@@ -267,14 +310,14 @@ export default {
       this.$router.push('/dashboard/OrderHistory')
     },
     logout() {
-    this.$store.dispatch('modules/userInfo/logout').then(() => {
-      this.$router.push('/').then(() => {
-        this.dialog = true;
-      })
-    }).catch(error => {
-      console.error("Error during logout:", error);
-    });
-  },
+      this.$store.dispatch('modules/userInfo/logout').then(() => {
+        this.$router.push('/').then(() => {
+          this.dialog = true;
+        })
+      }).catch(error => {
+        console.error("Error during logout:", error);
+      });
+    },
   },
 
 }

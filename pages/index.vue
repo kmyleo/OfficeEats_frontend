@@ -183,6 +183,7 @@
 </template>
 <script>
 import {CardSection} from '@/assets/database/data.js';
+import {checkRouteAuthorization} from "@/utils/authorization";
 
 export default {
   layout: 'landingHeader',
@@ -256,6 +257,9 @@ export default {
 
       ]
     }
+  },
+  mounted() {
+    // checkRouteAuthorization(this.$router.currentRoute, this, this.$router)
   }
 }
 </script>
